@@ -13,9 +13,11 @@ import skbio
 import biom
 
 import pandas as pd
+import numpy as np
 import q2templates
 
 from qiime2 import Metadata
+from scipy.stats import gaussian_kde
 
 
 TEMPLATES = pkg_resources.resource_filename('q2_american_gut', 'assets')
@@ -52,3 +54,32 @@ def _insanity_checker(samples, metadata, table, alpha, pcoa):
                          'vector')
     if not samples.issubset(set(pcoa.samples.index)):
         raise ValueError('There are missing samples in the ordination')
+
+
+def _compute_alpha(alpha, samples):
+    '''
+    this function gets data in a format that we can put it in a json document
+    1. KDE
+    2. pull out a-div values for samples of interest
+
+    based on:
+    https://glowingpython.blogspot.com/2012/08/kernel-density-estimation-with-\
+    scipy.html
+
+    returns
+    -------
+    alpha_kde : dict
+        alpha_kde_x
+        alpha_kde_y
+        alpha_markers
+    '''
+    x = np.linspace(alpha.min(), alpha.max(), 1000)
+    y = gaussian_kde(alpha)(x)
+
+    markers = alpha.loc[samples].to_dict()
+
+    alpha_kde = {'alpha_kde_x': x.tolist(),
+                 'alpha_kde_y': y.tolist(),
+                 'alpha_markers': markers}
+
+    return alpha_kde

@@ -12,7 +12,7 @@ import biom
 import numpy as np
 
 from skbio import OrdinationResults
-from q2_american_gut._visualizer import _insanity_checker
+from q2_american_gut._visualizer import _insanity_checker, _compute_alpha
 
 
 class AGReportTests(unittest.TestCase):
@@ -24,7 +24,7 @@ class AGReportTests(unittest.TestCase):
 
         eigvals = [0.51236726, 0.30071909, 0.26791207]
         proportion_explained = [0.2675738328, 0.157044696, 0.1399118638]
-        sample_ids = ['a', 'b', 'c']
+        self.sample_ids = ['a', 'b', 'c']
         axis_labels = ['PC%d' % i for i in range(1, 4)]
         np.random.seed(11)
         data = np.random.randn(3, 3)
@@ -35,7 +35,7 @@ class AGReportTests(unittest.TestCase):
             eigvals=pd.Series(eigvals, index=axis_labels),
             samples=pd.DataFrame(
                 data,
-                index=sample_ids, columns=axis_labels),
+                index=self.sample_ids, columns=axis_labels),
             proportion_explained=pd.Series(proportion_explained,
                                            index=axis_labels))
         self.ordination = expected_results
@@ -71,6 +71,16 @@ class AGReportTests(unittest.TestCase):
                           self.biom,
                           self.alpha,
                           self.ordination)
+
+    def test_compute_alpha(self):
+        res = _compute_alpha(self.alpha, self.sample_ids)
+        self.assertEqual(res['alpha_markers'], {'a': 1,
+                                                'b': 2,
+                                                'c': 3})
+        self.assertEqual(min(res['alpha_kde_x']), 1)
+        self.assertEqual(max(res['alpha_kde_x']), 3)
+        self.assertEqual(len(res['alpha_kde_x']), 1000)
+        self.assertEqual(len(res['alpha_kde_y']), 1000)
 
 
 if __name__ == "__main__":
