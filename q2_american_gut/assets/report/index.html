@@ -2,9 +2,50 @@
 
 {% block head %}
     <title>American Gut Report</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
 
 {% block content %}
-        <h1>American Gut Report for {{ name }}</h1>
-        <img src='./resources/ag_logo.png' alt='American Gut Logo'>
+    <h1>American Gut Report for {{ name }}</h1>
+    <img src='./resources/ag_logo.png' alt='American Gut Logo'>
+
+    <!-- adapted from: https://plot.ly/~ayusharyal/239/kde-vs-histogram-plot-of-fares/#code -->
+    <div id="alpha-kde"></div>
+
+    <script>
+    let DATA = {{ DATA | tojson }};
+
+    let kdeTrace = {
+      x: DATA['alpha_kde_x'],
+      y: DATA['alpha_kde_y'],
+      mode: 'lines',
+      name: 'alpha-diversity',
+      type: 'scatter',
+      xaxis: 'x1',
+      yaxis: 'y1'
+    };
+
+    let data = [kdeTrace];
+    let layout = {
+      showlegend: false,
+      title: 'Alpha Diversity Distributions for American Gut Participants 💩',
+      xaxis1: {
+        anchor: 'y1',
+        side: 'bottom',
+        type: 'linear'
+      },
+      yaxis1: {
+        anchor: 'x1',
+        side: 'left',
+        title: "Faith's phylogenetic diversity",
+        type: 'linear'
+      }
+    };
+    Plotly.plot('alpha-kde', {
+      data: data,
+      layout: layout
+    });
+
+    </script>
+
 {% endblock %}

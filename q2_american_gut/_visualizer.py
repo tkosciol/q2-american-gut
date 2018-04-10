@@ -31,11 +31,15 @@ def report(output_dir: str,
            taxonomy: pd.Series,
            samples: list) -> None:
     metadata = metadata.to_dataframe()
+    DATA = {}
 
     _insanity_checker(samples, metadata, table, alpha, pcoa)
 
+    DATA.update(_compute_alpha(alpha, samples))
+
     index = os.path.join(TEMPLATES, 'report', 'index.html')
-    q2templates.render(index, output_dir, context={'name': 'foo'})
+    q2templates.render(index, output_dir, context={'name': 'foo',
+                                                   'DATA': DATA})
 
     # Copy assets for rendering figure
     shutil.copytree(os.path.join(TEMPLATES, 'report', 'resources'),
