@@ -3,6 +3,7 @@
 {% block head %}
     <title>American Gut Report</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="http://underscorejs.org/underscore-min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -25,19 +26,36 @@
       yaxis: 'y1'
     };
 
-    let data = [kdeTrace];
+    let ones = [];
+    for (let i = 0; i < _.size(DATA.alpha_markers); i++) {
+        ones.push(1);
+    }
+
+    // adapted from: https://plot.ly/javascript/text-and-annotations/#styling-and-formatting-annotations
+    let alphaMarkers = {
+        x:_.values(DATA.alpha_markers),
+        y:ones,
+        type:'scatter',
+        mode:'markers',
+        name:'',
+        text:_.keys(DATA.alpha_markers),
+        marker:{color:'rgba(200, 50, 100, .7)', size:12}
+    };
+
+    let data = [kdeTrace, alphaMarkers];
     let layout = {
       showlegend: false,
       title: 'Alpha Diversity Distributions for American Gut Participants 💩',
       xaxis1: {
         anchor: 'y1',
         side: 'bottom',
+        title: "Faith's phylogenetic diversity",
         type: 'linear'
       },
       yaxis1: {
         anchor: 'x1',
         side: 'left',
-        title: "Faith's phylogenetic diversity",
+        title: "Number of people",
         type: 'linear'
       }
     };
