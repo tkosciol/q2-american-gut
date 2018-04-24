@@ -47,6 +47,17 @@ def report(output_dir: str,
 
 
 def _insanity_checker(samples, metadata, table, alpha, pcoa):
+    '''
+    Check if all of the data required by the plugin contains the samples
+    provided for analysis. Objects themselves need to be Q2-compliant, so there
+    is no need to sanity check them.
+
+    Raises
+    ------
+    ValueError
+        if any object is missing samples provided by `samples`
+    '''
+
     samples = set(samples)
 
     if not samples.issubset(set(metadata.index)):
@@ -70,7 +81,7 @@ def _compute_alpha(alpha, samples):
     https://glowingpython.blogspot.com/2012/08/kernel-density-estimation-with-\
     scipy.html
 
-    returns
+    Returns
     -------
     alpha_kde : dict
         alpha_kde_x
