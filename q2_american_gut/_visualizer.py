@@ -88,7 +88,7 @@ def _compute_alpha(alpha, samples):
         alpha_kde_y
         alpha_markers
     '''
-    x = np.linspace(alpha.min(), alpha.max(), 1000)
+    x = np.linspace(alpha.min(), alpha.max(), 100)
     y_density = gaussian_kde(alpha)(x)
     y = y_density * len(alpha)
 
