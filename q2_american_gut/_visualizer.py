@@ -30,15 +30,14 @@ def report(output_dir: str,
            table: biom.Table,
            taxonomy: pd.Series,
            samples: list) -> None:
-    metadata = metadata.to_dataframe()
     DATA = {}
+    q2_metadata = metadata
 
+    metadata = metadata.to_dataframe()
     _insanity_checker(samples, metadata, table, alpha, pcoa)
 
-    DATA.update(_compute_alpha(alpha, samples))
-
     index = os.path.join(TEMPLATES, 'report', 'index.html')
-    q2templates.render(index, output_dir, context={'name': 'foo',
+    q2templates.render(index, output_dir, context={'name': ', '.join(samples),
                                                    'DATA': DATA})
 
     # Copy assets for rendering figure
@@ -69,33 +68,3 @@ def _insanity_checker(samples, metadata, table, alpha, pcoa):
                          'vector')
     if not samples.issubset(set(pcoa.samples.index)):
         raise ValueError('There are missing samples in the ordination')
-
-
-def _compute_alpha(alpha, samples):
-    '''
-    this function gets data in a format that we can put it in a json document
-    1. KDE
-    2. pull out a-div values for samples of interest
-
-    based on:
-    https://glowingpython.blogspot.com/2012/08/kernel-density-estimation-with-\
-    scipy.html
-
-    Returns
-    -------
-    alpha_kde : dict
-        alpha_kde_x
-        alpha_kde_y
-        alpha_markers
-    '''
-    x = np.linspace(alpha.min(), alpha.max(), 100)
-    y_density = gaussian_kde(alpha)(x)
-    y = y_density * len(alpha)
-
-    markers = alpha.loc[samples].to_dict()
-
-    alpha_kde = {'alpha_kde_x': x.tolist(),
-                 'alpha_kde_y': y.tolist(),
-                 'alpha_markers': markers}
-
-    return alpha_kde
