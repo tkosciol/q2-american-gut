@@ -13,9 +13,11 @@ import skbio
 import biom
 
 import pandas as pd
+import numpy as np
 import q2templates
 
 from qiime2 import Metadata
+from scipy.stats import gaussian_kde
 
 
 TEMPLATES = pkg_resources.resource_filename('q2_american_gut', 'assets')
@@ -28,12 +30,15 @@ def report(output_dir: str,
            table: biom.Table,
            taxonomy: pd.Series,
            samples: list) -> None:
-    metadata = metadata.to_dataframe()
+    DATA = {}
+    q2_metadata = metadata
 
+    metadata = metadata.to_dataframe()
     _insanity_checker(samples, metadata, table, alpha, pcoa)
 
     index = os.path.join(TEMPLATES, 'report', 'index.html')
-    q2templates.render(index, output_dir, context={'name': 'foo'})
+    q2templates.render(index, output_dir, context={'name': ', '.join(samples),
+                                                   'DATA': DATA})
 
     # Copy assets for rendering figure
     shutil.copytree(os.path.join(TEMPLATES, 'report', 'resources'),
@@ -41,6 +46,17 @@ def report(output_dir: str,
 
 
 def _insanity_checker(samples, metadata, table, alpha, pcoa):
+    '''
+    Check if all of the data required by the plugin contains the samples
+    provided for analysis. Objects themselves need to be Q2-compliant, so there
+    is no need to sanity check them.
+
+    Raises
+    ------
+    ValueError
+        if any object is missing samples provided by `samples`
+    '''
+
     samples = set(samples)
 
     if not samples.issubset(set(metadata.index)):
