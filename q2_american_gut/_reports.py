@@ -61,7 +61,6 @@ class Reporter:
         # return a plot (SVG)
         return None
 
-
     def summarize_taxa(self, subset):
         """
 
@@ -88,8 +87,36 @@ class Reporter:
             Wat?
 
         """
+
+        subset = self.mf[
+            (self.mf[self.host_type] == host_type_value) &
+            (self.mf[self.host_subject_id] == host_subject_id_value) &
+            (self.mf[self.sample_type] == sample_type_value)
+            ]
+
         # should be a sample subset for the category values
-        return []
+        return subset.index
+
+    def iter_data():
+        """This method is to be used to generate the necessary plots
+        """
+        # this is all pseudocode:
+        #
+        # for host_type in self.reporter.hosts:
+        #     for host_subject_id in self.reporter.host_types:
+        #         for sample_type in self.reporter.sample_types:
+        #             pass
+        for host_type in self.mf[self.host_type].unique():
+            for host_subject_id in self.mf[self.host_subject_id].unique():
+                for sample_type in self.mf[self.sample_type].unique():
+
+                subset = self.mf[
+                    (self.mf[self.host_type] == host_type_value) &
+                    (self.mf[self.host_subject_id] == host_subject_id_value) &
+                    (self.mf[self.sample_type] == sample_type_value)
+                    ]
+
+                    yield (samples, host_type, host_subject_id, sample_type)
 
 
 class ReporterView:
@@ -101,13 +128,19 @@ class ReporterView:
         pass
 
     def display(self):
-        # this is all pseudocode:
-        #
-        # for host_type in self.reporter.hosts:
-        #     for host_subject_id in self.reporter.host_types:
-        #         for sample_type in self.reporter.sample_types:
-        #             pass
-        pass
+        # run the logic to create the plots and display the data
+        accumulator = []
+
+        for s, host_type, subject_id, sample_type in self.reporter.iter_data():
+
+            taxa = self.reporter.summarize_taxa(s)
+            beta = self.reporter.plot_beta(s)
+            alpha = self.reporter.plot_alpha(s, self.reporter.sample_type,
+                                             sample_type)
+
+            # create a template of some sort with all these things
+            accumulator.append(self.render('graphical.html', taxa=taxa,
+                                           beta=beta, alpha=alpha))
 
     def site_translator(self, site_name):
         # translate between category names and emojis
