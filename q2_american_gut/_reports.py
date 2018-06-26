@@ -140,6 +140,9 @@ class ReporterView:
 
         self.reporter = reporter
 
+        # TODO: fix this so it locates the correct template name
+        self.template_name = 'some-path/' + 'plot-grid.html'
+
     def render(self, host_id, host_type, sample_type):
 
         s = self.reporter.get_subset(host_type, host_id, sample_type)
@@ -150,7 +153,7 @@ class ReporterView:
                                          sample_type)
 
             # create a template of some sort with all these things
-        self.render('plots-grid.html', taxa=taxa, beta=beta, alpha=alpha)
+        self.render(self.template_name, taxa=taxa, beta=beta, alpha=alpha)
 
     def site_translator(self, site_name):
         # translate between category names and emojis
