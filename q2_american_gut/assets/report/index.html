@@ -19,12 +19,6 @@
   <h1>American Gut Report for samples: {{ name }}</h1>
   <img src='./resources/ag_logo.png' alt='American Gut Logo'>
 
-  <script>
-  // here we'll do something good with the data
-  let DATA = {{ DATA | tojson }};
-
-  </script>
-
   <!-- top level subject's list -->
   <ul name='hosts'>
   {% for host_id, host_type in reporter_view.reporter.iter_subjects() %}
@@ -49,10 +43,7 @@
 
       {% for sample_type in reporter_view.reporter.iter_sample_types(host_id, host_type) %}
         <div class="tab-pane" id="{{host_id}}-{{host_type}}-{{sample-type}}">
-          <!-- TODO: SOMETHING BETTER NEEDS TO HAPPEN HERE -->
-
-          {{reporter_view.render(host_id, host_type, sample_type)}
-
+          {{reporter_view.render_plots(host_id, host_type, sample_type)}
         </div>
       {% endfor%}
 

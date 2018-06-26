@@ -19,6 +19,7 @@ import q2templates
 from qiime2 import Metadata
 from scipy.stats import gaussian_kde
 
+from ._reports import Reporter, ReporterView
 
 TEMPLATES = pkg_resources.resource_filename('q2_american_gut', 'assets')
 
@@ -36,9 +37,15 @@ def report(output_dir: str,
     metadata = metadata.to_dataframe()
     _insanity_checker(samples, metadata, table, alpha, pcoa)
 
+    # instantiate the reporter
+    rep = Reporter(.....)
+
+    # instantiate the reporter view
+    reporter_view = ReporterView(rep)
+
     index = os.path.join(TEMPLATES, 'report', 'index.html')
-    q2templates.render(index, output_dir, context={'name': ', '.join(samples),
-                                                   'DATA': DATA})
+    q2templates.render(index, output_dir,
+                       context={'reporter_view': reporter_view, 'DATA': DATA})
 
     # Copy assets for rendering figure
     shutil.copytree(os.path.join(TEMPLATES, 'report', 'resources'),
