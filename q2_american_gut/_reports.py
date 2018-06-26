@@ -95,10 +95,22 @@ class Reporter:
             ]
 
         # should be a sample subset for the category values
-        return subset.index
+        return subset.index.copy()
 
-    def iter_data():
-        """This method is to be used to generate the necessary plots
+    def iter_sample_types(self, host_id_value, host_type_value):
+        # expects to yield the sample_types
+        pass
+
+    def iter_subjects(self):
+        # expects to yield the sample_types
+        pass
+
+    def get_samples():
+        """
+        I think we can kill this method in favor of iter_sample_types and
+        iter_subjects.
+
+        ~~This method is to be used to generate the necessary plots~~
         """
         # this is all pseudocode:
         #
@@ -106,17 +118,18 @@ class Reporter:
         #     for host_subject_id in self.reporter.host_types:
         #         for sample_type in self.reporter.sample_types:
         #             pass
-        for host_type in self.mf[self.host_type].unique():
-            for host_subject_id in self.mf[self.host_subject_id].unique():
-                for sample_type in self.mf[self.sample_type].unique():
+        # for host_type in self.mf[self.host_type].unique():
+        #     for host_subject_id in self.mf[self.host_subject_id].unique():
+        #         for sample_type in self.mf[self.sample_type].unique():
 
-                subset = self.mf[
-                    (self.mf[self.host_type] == host_type_value) &
-                    (self.mf[self.host_subject_id] == host_subject_id_value) &
-                    (self.mf[self.sample_type] == sample_type_value)
-                    ]
+        #         subset = self.mf[
+        #             (self.mf[self.host_type] == host_type_value) &
+        #             (self.mf[self.host_subject_id] == host_subject_id_value) &
+        #             (self.mf[self.sample_type] == sample_type_value)
+        #             ]
 
-                    yield (samples, host_type, host_subject_id, sample_type)
+        #             yield (samples, host_type, host_subject_id, sample_type)
+        pass
 
 
 class ReporterView:
@@ -124,23 +137,20 @@ class ReporterView:
         # define a property for
         #       display_template: thing that contains alpha, beta and taxa
         #       page_template: thing that contains multiple display_templates
-        #       the reporter
-        pass
 
-    def display(self):
-        # run the logic to create the plots and display the data
-        accumulator = []
+        self.reporter = reporter
 
-        for s, host_type, subject_id, sample_type in self.reporter.iter_data():
+    def render(self, host_id, host_type, sample_type):
 
-            taxa = self.reporter.summarize_taxa(s)
-            beta = self.reporter.plot_beta(s)
-            alpha = self.reporter.plot_alpha(s, self.reporter.sample_type,
-                                             sample_type)
+        s = self.reporter.get_subset(host_type, host_id, sample_type)
+
+        taxa = self.reporter.summarize_taxa(s)
+        beta = self.reporter.plot_beta(s)
+        alpha = self.reporter.plot_alpha(s, self.reporter.sample_type,
+                                         sample_type)
 
             # create a template of some sort with all these things
-            accumulator.append(self.render('graphical.html', taxa=taxa,
-                                           beta=beta, alpha=alpha))
+        self.render('plots-grid.html', taxa=taxa, beta=beta, alpha=alpha)
 
     def site_translator(self, site_name):
         # translate between category names and emojis

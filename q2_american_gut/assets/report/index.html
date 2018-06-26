@@ -1,19 +1,62 @@
 {% extends "base.html" %}
+<!--
+
+  Expected inputs for this template
+  =================================
+
+  reporter_view, object in charge of creating the plots for a given reporter.
+  For more details see _reporter.py
+
+-->
 
 {% block head %}
-    <title>American Gut Report</title>
-    <!-- TODO: revise if we actually need underscore -->
-    <script src="./resources/vendor/js/underscore-min.js"></script>
+  <title>American Gut Report</title>
+  <!-- TODO: revise if we actually need underscore -->
+  <script src="./resources/vendor/js/underscore-min.js"></script>
 {% endblock %}
 
 {% block content %}
-    <h1>American Gut Report for samples: {{ name }}</h1>
-    <img src='./resources/ag_logo.png' alt='American Gut Logo'>
+  <h1>American Gut Report for samples: {{ name }}</h1>
+  <img src='./resources/ag_logo.png' alt='American Gut Logo'>
 
-    <script>
-    // here we'll do something good with the data
-    let DATA = {{ DATA | tojson }};
+  <script>
+  // here we'll do something good with the data
+  let DATA = {{ DATA | tojson }};
 
-    </script>
+  </script>
+
+  <!-- top level subject's list -->
+  <ul name='hosts'>
+  {% for host_id, host_type in reporter_view.reporter.iter_subjects() %}
+    <li>
+      <a  href="#{{host_id}}-{{host_type}}" data-toggle="tab">{{host_id}}</a>
+    </li>
+  {% endfor%}
+  </ul>
+
+  <!-- div containers for the subjects -->
+  {% for host_id, host_type in reporter_view.reporter.iter_subjects() %}
+    <div class="tab-pane" id="{{host_id}}-{{host_type}}">
+
+      <!-- for loop for the per-subject plots -->
+      <ul name='sample-types'>
+      {% for sample_type in reporter_view.reporter.iter_sample_types(host_id, host_type) %}
+        <li>
+          <a  href="#{{host_id}}-{{host_type}}-{{sample_type}}" data-toggle="tab">{{sample_type}}</a>
+        </li>
+      {% endfor%}
+      </ul>
+
+      {% for sample_type in reporter_view.reporter.iter_sample_types(host_id, host_type) %}
+        <div class="tab-pane" id="{{host_id}}-{{host_type}}-{{sample-type}}">
+          <!-- TODO: SOMETHING BETTER NEEDS TO HAPPEN HERE -->
+
+          {{reporter_view.render(host_id, host_type, sample_type)}
+
+        </div>
+      {% endfor%}
+
+    </div>
+  {% endfor%}
 
 {% endblock %}
