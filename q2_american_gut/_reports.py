@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import jinja2
+import pkg_resources
 import seaborn as sns
 import matplotlib.pyplot as plt
 from io import StringIO
@@ -14,7 +15,7 @@ import pandas as pd
 
 
 class Reporter:
-    def __init__(alpha, beta, taxa, mf, samples):
+    def __init__(self, alpha, beta, taxa, mf, samples):
         self.host_type = 'HOST_TYPE'
         self.host_subject_id = 'HOST_SUBJECT_ID'
         self.sample_type = 'SAMPLE_TYPE'
@@ -146,12 +147,13 @@ class ReporterView:
     template_for_plots = 'plot-grid.html'
 
     def __init__(self, reporter):
-        path = pkg_resources.resource_filename('q2_american_gut', 'assets',
-                                               'report')
+        path = pkg_resources.resource_filename('q2_american_gut',
+                                               'assets/report/')
 
         loader = jinja2.FileSystemLoader(searchpath=path)
         environment = jinja2.Environment(loader=loader)
-        self.plot_grid = environment.get_template(self.template_for_plots)
+
+        self.plot_grid = environment.get_template('plot-grid.html')
 
         self.reporter = reporter
 
