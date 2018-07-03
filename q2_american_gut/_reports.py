@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import jinja2
+
 
 class Reporter:
     def __init__(alpha, beta, taxa, mf, samples):
@@ -71,29 +73,6 @@ class Reporter:
         # return an HTML-formatted Pandas dataframe
         return None
 
-    def get_subset(self, host_type_value, host_subject_id_value,
-                   sample_type_value):
-        """
-        Parameters
-        ----------
-        host_type_value: str
-            Wat?
-        host_subject_id_value: str
-            Wat?
-        sample_type_value: str
-            Wat?
-
-        """
-
-        subset = self.mf[
-            (self.mf[self.host_type] == host_type_value) &
-            (self.mf[self.host_subject_id] == host_subject_id_value) &
-            (self.mf[self.sample_type] == sample_type_value)
-            ]
-
-        # should be a sample subset for the category values
-        return subset.index.copy()
-
     def iter_sample_types(self, subject_sub):
         """Iterate over the sample types in a subject's dataframe
 
@@ -138,18 +117,17 @@ class Reporter:
 
 
 class ReporterView:
-    def __init__(reporter):
-        # define a property for
-        #       display_template: thing that contains alpha, beta and taxa
-        #       page_template: thing that contains multiple display_templates
+    template_for_plots = 'plot-grid.html'
+
+    def __init__(self, reporter):
+        path = pkg_resources.resource_filename('q2_american_gut', 'assets',
+                                               'report')
+
+        loader = jinja2.FileSystemLoader(searchpath=path)
+        environment = jinja2.Environment(loader=loader)
+        self.plot_grid = environment.get_template(self.template_for_plots)
 
         self.reporter = reporter
-
-        # TODO: fix this so it locates the correct template name
-        # load jinja's template using the Template object
-        # TODO: figure out how to do this right.
-        self.plot_grid = Template('some-path/' + 'plot-grid.html')
-
 
     def render_plots(self, sample_type, sample_type_subset):
 

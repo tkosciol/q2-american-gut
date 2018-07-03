@@ -38,7 +38,7 @@ def report(output_dir: str,
     _insanity_checker(samples, metadata, table, alpha, pcoa)
 
     # instantiate the reporter
-    rep = Reporter(.....)
+    rep = Reporter(alpha, pcoa, table, metadata, samples)
 
     # instantiate the reporter view
     reporter_view = ReporterView(rep)
