@@ -7,6 +7,10 @@
 # ----------------------------------------------------------------------------
 
 import jinja2
+import seaborn as sns
+import matplotlib.pyplot as plt
+from io import StringIO
+import pandas as pd
 
 
 class Reporter:
@@ -22,29 +26,51 @@ class Reporter:
         self._mf = mf
         self._samples = set(samples)
 
-    def plot_alpha(self, subset, category, category_value):
+    def plot_alpha(self, subset):
         """
 
         Parameters
         ---------
         subset: list of str
             A list of samples to highlight in an alpha diversity plot.
-        category: str
-            Metadata column to search for ``category_value``.
-        category_value: str
-            Value in the metadata column to subset the data by.
         """
 
-        # if there's more than one sample:
-        #      create a line plot
-        #
-        #     Note: remember the subaxis plot
-        # else:
-        #      create a distribution plot.
-        #
+        if len(subset) > 1:
+        # if more than 1 sample for the participant
+        # distribution rotated 90deg. and line plot of alpha diversity over time
+
+            fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+
+            # create a line plot
+            tiny_mf = self._mf.loc[subset].copy()
+            tiny_mf['α'] = self._alpha[subset]
+            tiny_mf['Time'] = pd.to_datetime(tiny_mf['collection_timestamp'],
+                                             errors='coerce')
+            main_plot = sns.pointplot(x="Time",
+                                      y="α",
+                                      data=tiny_mf,
+                                      ax=ax2)
+
+            for tick in ax2.get_xticklabels():
+                tick.set_rotation(90)
+
+        else:
+        # Note: remember the subaxis plot
+        # use distribution plot and add a vertical line indicating the sample
+            fig, ax1 = plt.subplots(1)
+
+        # distribution: all of AG for a given sample type
+        ag_distplot = sns.distplot(alpha, vertical=(len(subset)>1),
+                                   hist=False, ax=ax1)
+
+        imgdata = StringIO()
+        fig.savefig(imgdata, format='svg')
+        imgdata.seek(0)  # rewind the data
+
+        svg_data = imgdata.getvalue()  # this is svg data
 
         # return a plot (SVG)
-        return None
+        return svg_data
 
     def plot_beta(self, subset):
         """
@@ -129,14 +155,13 @@ class ReporterView:
 
         self.reporter = reporter
 
-    def render_plots(self, sample_type, sample_type_subset):
+    def render_plots(self, sample_type_subset):
 
         s = sample_type_subset.index.tolist()
 
         taxa = self.reporter.summarize_taxa(s)
         beta = self.reporter.plot_beta(s)
-        alpha = self.reporter.plot_alpha(s, self.reporter.sample_type,
-                                         sample_type)
+        alpha = self.reporter.plot_alpha(s)
 
         # create a template of some sort with all these things
         return self.plot_grid.render(taxa=taxa, beta=beta, alpha=alpha)
