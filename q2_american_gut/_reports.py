@@ -11,6 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from io import StringIO
 import pandas as pd
+import numpy as np
 
 
 class Reporter:
@@ -78,13 +79,38 @@ class Reporter:
         Parameters
         ---------
         subset: list of str
-            A list of samples to highlight in an alpha diversity plot.
+            A list of samples to highlight in an beta diversity plot.
         """
         # makes a scatter plot based on pc1, pc2 and colored by body site
         # highlights the subset of samples
 
+        area = 20
+        body_sites = self._mf[self.sample_type].unique()
+        colors = np.random.rand(len(body_sites), 3)
+
+        # general distribution
+        # colored by body site
+        for i, body_site in enumerate(body_sites):
+            body_site_subset = self._beta.samples.loc[self._mf[self._mf[self.sample_type] == body_site].index]
+
+            plt.scatter(body_site_subset[0], body_site_subset[1],
+                        s=area,
+                        c=colors[i])
+
+        # highlight samples
+        highlight_subset = self._beta.samples.loc[subset]
+
+        plt.scatter(highlight_subset[0], highlight_subset[1],
+                    s=area**2, c='red', alpha=0.9)
+
+        imgdata = StringIO()
+        plt.savefig(imgdata, format='svg')
+        imgdata.seek(0)  # rewind the data
+
+        svg_data = imgdata.getvalue()  # this is svg data
+
         # return a plot (SVG)
-        return None
+        return svg_data
 
     def summarize_taxa(self, subset):
         """
