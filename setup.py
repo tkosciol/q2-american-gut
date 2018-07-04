@@ -78,6 +78,7 @@ setup(
                   'q2_american_gut': ['assets/reference_phylogeny_tiny.qza',
                                       'assets/reference_alignment_tiny.qza',
                                       'assets/report/index.html',
+                                      'assets/report/plot-grid.html',
                                       'assets/report/resources/*']
                   },
     author="Daniel McDonald",
