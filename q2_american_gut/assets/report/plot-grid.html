@@ -6,10 +6,6 @@
 
 -->
 
-'COMP_CHART_TEXT_MODAL': 'This interactive graph allows you to explore the difference between the bacteria found in your sample and the bacteria found in the samples of specific groups. For example, you can compare your sample against others in your age group or those who share your type of diet. Hover your mouse over the bars, and the graph will show the direction of change for the taxa that are different between your sample and the comparison group you choose. For example, if you choose Class as the taxa level and age-20s as the category for comparison, you will see several bars pointing up (representing an increase in that taxa in your sample compared to the comparison group) and down (representing a decrease in that taxa in your sample compared to the comparison group), and each bar will be labelled by bacterial Class. Hovering your mouse over the blue bars will show you how much more or less of that taxa you have than the average participant in the category selected. By default, we compare you with all samples of the same type, e.g. all stool if your sample is stool.<br/><br/> <strong>Summary of Interactive Chart Function:</strong> <br/><br/>- Select Sample: Choose the sample that you want to compare to the average participant sample.<br/><br/>- Select Taxa Level: (Phylum, Class, Order, Family, Genus) -Determines the taxanomic level at which you will compare your sample.<br/><br/>- Select Category : Determines the group of participants to which you will compare your sample.<br/><br/>- Hover Mouse Over Bar: Displays the taxa and amount of change between your sample and the comparison.',
-'ALPHA_DIV_TEXT': '<strong>Check out that diversity!</strong> The vertical black line on this graph shows your sample\'s diversity in comparison to all %(shorthand)s samples from the same body site.' % {'sitebase': _SITEBASE, 'shorthand': AMGUT_CONFIG.project_shorthand},
-
-
 <div name='intro'>
 <strong>These are your microbes!</strong>
 Here you can explore both the types and amounts of bacteria we\'ve found in your sample.
@@ -17,7 +13,7 @@ Dive deeper into your results and see how your microbes compare to other partici
 </div>
 
 <div name='alpha-diversity-plot'>
-{{alpha}}
+{{ alpha }}
 Alpha diversity is the amount of diversity found within a sample.
 This graph compares the alpha diversity in your sample with the alpha diversity in all samples.
 On the graph, the vertical black line represents your sample\'s alpha diversity.
@@ -33,11 +29,11 @@ For more information on alpha diversity, please see our two part blog post:
 </div>
 
 <div name='beta-diversity-plot'>
-{{beta}}
+{{ beta }}
 </div>
 
 <div name='taxa-plot'>
-{{taxa}}
+{{ taxa }}
 You can explore the relative abundances of bacterial taxa found in your sample(s).
 The taxonomic levels that you can look at range from Phylum (shallow) to Genus (deep).
 An explanation of taxonomy and taxonomic levels can be read <a href="https://microbio.me/%(sitebase)sauthed/addendum/#taxcharts">here</a>;
