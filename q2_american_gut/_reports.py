@@ -61,7 +61,7 @@ class Reporter:
             fig, ax1 = plt.subplots(1)
 
         # distribution: all of AG for a given sample type
-        ag_distplot = sns.distplot(alpha, vertical=(len(subset)>1),
+        ag_distplot = sns.distplot(self._alpha, vertical=(len(subset)>1),
                                    hist=False, ax=ax1)
 
         imgdata = StringIO()
@@ -136,7 +136,7 @@ class Reporter:
             The subset of the metadata corresponding to each subject's samples.
         """
         # expects to yield the subject ids and subject types
-        sub = self.mf.loc[self._samples].copy()
+        sub = self._mf.loc[self._samples].copy()
 
         for vals, df in sub.groupby([self.host_subject_id, self.host_type]):
             host_subject_id, host_type = vals
