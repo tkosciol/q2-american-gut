@@ -193,11 +193,11 @@ class ReporterView:
 
         self.reporter = reporter
 
-    def render_plots(self, sample_type_subset):
+    def render_plots(self, sample_type, sample_type_subset):
 
         s = sample_type_subset.index.tolist()
 
-        taxa = self.reporter.summarize_taxa(s)
+        taxa = self.reporter.summarize_taxa(sample_type, s)
         beta = self.reporter.plot_beta(s)
         alpha = self.reporter.plot_alpha(s)
 

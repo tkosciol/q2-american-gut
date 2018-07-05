@@ -47,7 +47,7 @@
       {# st is the sample type subset, should only include a subject's samples #}
       {% for sample_type, st_subset in reporter_view.reporter.iter_sample_types(subset) %}
         <div class="tab-pane" id="{{host_id}}-{{host_type}}-{{sample_type}}">
-          {{reporter_view.render_plots(st_subset)}}
+          {{reporter_view.render_plots(sample_type, st_subset)}}
         </div>
       {% endfor%}
 
