@@ -22,36 +22,44 @@
   <h1>American Gut Report for samples: {{ name }}</h1>
   <img src='./resources/ag_logo.png' alt='American Gut Logo'>
 
-  <!-- top level subject's list -->
-  <ul name='hosts'>
-  {% for host_id, host_type, _ in reporter_view.reporter.iter_subjects() %}
-    <li>
-      <a  href="#{{host_id}}-{{host_type}}" data-toggle="tab">{{host_id}}</a>
-    </li>
-  {% endfor%}
-  </ul>
+  <div class="container-fluid">
 
-  <!-- div containers for the subjects -->
-  {% for host_id, host_type, subset in reporter_view.reporter.iter_subjects() %}
-    <div class="tab-pane" id="{{host_id}}-{{host_type}}">
+    <!-- top level subject's list -->
+    <ul name='hosts' class="nav nav-tabs nav-justified">
+    {% for host_id, host_type, _ in reporter_view.reporter.iter_subjects() %}
+      <li>
+        <a href="#{{host_id}}-{{host_type}}" data-toggle="tab">{{host_id}}</a>
+      </li>
+    {% endfor%}
+    </ul>
 
-      <!-- for loop for the per-subject plots -->
-      <ul name='sample-types'>
-      {% for sample_type, _ in reporter_view.reporter.iter_sample_types(subset) %}
-        <li>
-          <a  href="#{{host_id}}-{{host_type}}-{{sample_type}}" data-toggle="tab">{{sample_type}}</a>
-        </li>
-      {% endfor%}
-      </ul>
+    <div class="tab-content">
+    <!-- div containers for the subjects -->
+    {% for host_id, host_type, subset in reporter_view.reporter.iter_subjects() %}
+      <div class="tab-pane fade in active" id="{{host_id}}-{{host_type}}">
 
-      {# st is the sample type subset, should only include a subject's samples #}
-      {% for sample_type, st_subset in reporter_view.reporter.iter_sample_types(subset) %}
-        <div class="tab-pane" id="{{host_id}}-{{host_type}}-{{sample_type}}">
-          {{reporter_view.render_plots(sample_type, st_subset)}}
+        <!-- for loop for the per-subject plots -->
+        <ul name='sample-types' class="nav nav-tabs nav-justified">
+        {% for sample_type, _ in reporter_view.reporter.iter_sample_types(subset) %}
+          <li>
+            <a  href="#{{host_id}}-{{host_type}}-{{sample_type}}" data-toggle="tab">{{sample_type}}</a>
+          </li>
+        {% endfor%}
+        </ul>
+
+        <div class="tab-content">
+        {# st is the sample type subset, should only include a subject's samples #}
+        {% for sample_type, st_subset in reporter_view.reporter.iter_sample_types(subset) %}
+          <div class="tab-pane" id="{{host_id}}-{{host_type}}-{{sample_type}}">
+            {{reporter_view.render_plots(sample_type, st_subset)}}
+          </div>
+        {% endfor%}
         </div>
-      {% endfor%}
 
+      </div>
+    {% endfor%}
     </div>
-  {% endfor%}
+
+  </div>
 
 {% endblock %}

@@ -88,6 +88,8 @@ class Reporter:
         # makes a scatter plot based on pc1, pc2 and colored by body site
         # highlights the subset of samples
 
+        fig, ax = plt.subplots(1)
+
         body_sites = self._mf[self.sample_type].unique()
         colors = np.random.rand(len(body_sites), 3)
 
@@ -96,18 +98,18 @@ class Reporter:
         for i, body_site in enumerate(body_sites):
             body_site_subset = self._beta.samples.loc[self._mf[self._mf[self.sample_type] == body_site].index]
 
-            plt.scatter(body_site_subset[0], body_site_subset[1],
-                        s=area,
-                        c=colors[i])
+            ax.scatter(body_site_subset[0], body_site_subset[1],
+                       s=area,
+                       c=colors[i])
 
         # highlight samples
         highlight_subset = self._beta.samples.loc[subset]
 
-        plt.scatter(highlight_subset[0], highlight_subset[1],
-                    s=area**2, c=subject_color, alpha=0.9)
+        ax.scatter(highlight_subset[0], highlight_subset[1],
+                   s=area**2, c=subject_color, alpha=0.9)
 
         imgdata = StringIO()
-        plt.savefig(imgdata, format='svg')
+        fig.savefig(imgdata, format='svg')
         imgdata.seek(0)  # rewind the data
 
         svg_data = imgdata.getvalue()  # this is svg data
