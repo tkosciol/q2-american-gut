@@ -16,7 +16,9 @@ import numpy as np
 
 
 class Reporter:
-    def __init__(self, alpha, beta, taxa, mf, samples):
+    def __init__(self, alpha, beta, taxa, mf, feature_table, samples):
+
+        # column names in the mapping file
         self.host_type = 'HOST_TYPE'
         self.host_subject_id = 'HOST_SUBJECT_ID'
         self.sample_type = 'SAMPLE_TYPE'
@@ -24,6 +26,7 @@ class Reporter:
         self._alpha = alpha
         self._beta = beta
         self._taxa = taxa
+        self._feature_table = feature_table
 
         self._mf = mf
         self._samples = set(samples)
@@ -74,7 +77,7 @@ class Reporter:
         # return a plot (SVG)
         return svg_data
 
-    def plot_beta(self, subset):
+    def plot_beta(self, subset, area = 20, subject_color = 'red'):
         """
 
         Parameters
@@ -85,7 +88,6 @@ class Reporter:
         # makes a scatter plot based on pc1, pc2 and colored by body site
         # highlights the subset of samples
 
-        area = 20
         body_sites = self._mf[self.sample_type].unique()
         colors = np.random.rand(len(body_sites), 3)
 
@@ -102,7 +104,7 @@ class Reporter:
         highlight_subset = self._beta.samples.loc[subset]
 
         plt.scatter(highlight_subset[0], highlight_subset[1],
-                    s=area**2, c='red', alpha=0.9)
+                    s=area**2, c=subject_color, alpha=0.9)
 
         imgdata = StringIO()
         plt.savefig(imgdata, format='svg')
@@ -113,14 +115,22 @@ class Reporter:
         # return a plot (SVG)
         return svg_data
 
-    def summarize_taxa(self, subset):
-        """
+    def summarize_taxa(self, sample_type, subset):
+        """Report most abundant and enriched microbes in subject's sample.
 
         Parameters
         ---------
+        sample_type: str
+            Specify sample type we summarize over.
         subset: list of str
             A list of samples to highlight in an alpha diversity plot.
         """
+        # most enriched microbes
+        # 1. calculate population-average proportion of microbes
+        # 2. calculate taxonomic summary for subject
+        # 3. calculate enrichment values for the subject
+
+
         # reuses whatever was on the latex thing
 
         # return an HTML-formatted Pandas dataframe
