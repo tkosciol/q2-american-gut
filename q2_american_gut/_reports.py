@@ -31,7 +31,7 @@ class Reporter:
         self._mf = mf
         self._samples = set(samples)
 
-    def plot_alpha(self, subset):
+    def plot_alpha(self, sample_type, subset):
         """
 
         Parameters
@@ -65,7 +65,11 @@ class Reporter:
             fig, ax1 = plt.subplots(1)
 
         # distribution: all of AG for a given sample type
-        ag_distplot = sns.distplot(self._alpha, vertical=(len(subset)>1),
+        # 1. subsample alpha vector
+        sample_type_subset = self._mf[self._mf[self.sample_type] == sample_type].index
+        alpha_sample_type = self._alpha.loc[sample_type_subset]
+        # 2. plot
+        ag_distplot = sns.distplot(alpha_sample_type, vertical=(len(subset)>1),
                                    hist=False, ax=ax1)
 
         imgdata = StringIO()
@@ -201,7 +205,7 @@ class ReporterView:
 
         taxa = self.reporter.summarize_taxa(sample_type, s)
         beta = self.reporter.plot_beta(s)
-        alpha = self.reporter.plot_alpha(s)
+        alpha = self.reporter.plot_alpha(sample_type, s)
 
         # create a template of some sort with all these things
         return self.plot_grid.render(taxa=taxa, beta=beta, alpha=alpha)
