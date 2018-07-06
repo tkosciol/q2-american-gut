@@ -6,37 +6,49 @@
 
 -->
 
-<div name='intro'>
-<strong>These are your microbes!</strong>
-Here you can explore both the types and amounts of bacteria we\'ve found in your sample.
-Dive deeper into your results and see how your microbes compare to other participants
-</div>
+<div class="container">
+  <div class="row">
+    <div name='intro' class='col-md-6'>
+    <strong>These are your microbes!</strong>
+    Here you can explore both the types and amounts of bacteria we\'ve found in your sample.
+    Dive deeper into your results and see how your microbes compare to other participants
+    </div>
+  </div>
 
-<div name='alpha-diversity-plot'>
-{{ alpha }}
-Alpha diversity is the amount of diversity found within a sample.
-This graph compares the alpha diversity in your sample with the alpha diversity in all samples.
-On the graph, the vertical black line represents your sample\'s alpha diversity.
-The blue curve shows the distribution of diversity across all samples.
-The peak of the blue curve shows the average sample\'s alpha diversity.
-This will allow you to see how the alpha diversity of your sample compares to that of the average sample.
-<br/>This graph illustrates Faith\'s Phylogenetic Diversity (PD), which calculates the level of phylogenetic diversity in your sample.
-The X-axis shows PD diversity, increasing left to right.
-This measure of alpha diversity uses a phylogenetic tree to determine the diversity or richness of your sample.
-For more information on alpha diversity, please see our two part blog post:
-<a href="http://americangut.org/using-my-thai-chili-experiment-to-describe-variability-of-diversity-part-1/">(1)</a>
-<a href="http://americangut.org/using-my-thai-chili-experiment-to-describe-variability-of-diversity-part-2/">(2)</a>
-</div>
+  <div class="row">
+    <div name='alpha-diversity-plot' class='col-md-6'>
+      {{ alpha }}
+      <br>
+      Alpha diversity is the amount of diversity found within a sample.
+      This graph compares the alpha diversity in your sample with the alpha diversity in all samples.
+      On the graph, the vertical black line represents your sample\'s alpha diversity.
+      The blue curve shows the distribution of diversity across all samples.
+      The peak of the blue curve shows the average sample\'s alpha diversity.
+      This will allow you to see how the alpha diversity of your sample compares to that of the average sample.
+      <br/>This graph illustrates Faith\'s Phylogenetic Diversity (PD), which calculates the level of phylogenetic diversity in your sample.
+      The X-axis shows PD diversity, increasing left to right.
+      This measure of alpha diversity uses a phylogenetic tree to determine the diversity or richness of your sample.
+      For more information on alpha diversity, please see our two part blog post:
+      <a href="http://americangut.org/using-my-thai-chili-experiment-to-describe-variability-of-diversity-part-1/">(1)</a>
+      <a href="http://americangut.org/using-my-thai-chili-experiment-to-describe-variability-of-diversity-part-2/">(2)</a>
+    </div>
 
-<div name='beta-diversity-plot'>
-{{ beta }}
-</div>
+    <div name='taxa-plot' class='col-md-6'>
+      {{ taxa }}
+      <br>
+      You can explore the relative abundances of bacterial taxa found in your sample(s).
+      The taxonomic levels that you can look at range from Phylum (shallow) to Genus (deep).
+      An explanation of taxonomy and taxonomic levels can be read <a href="https://microbio.me/%(sitebase)sauthed/addendum/#taxcharts">here</a>;
+      for an explanation of why 16S marker gene sequencing cannot identify species, please see <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1950982/">this paper</a>). If you look at deeper taxonomic levels, they will be colored different shades of the corresponding phylum color. Rolling over a color will tell you the bacterial taxonomy and relative abundance of that taxonomy in that sample.
+      <br/>- Select taxa level: (Phylum, Class, Order, Family, Genus) - will determine the level shown on each of the samples in the graph.
+    </div>
+  </div>
 
-<div name='taxa-plot'>
-{{ taxa }}
-You can explore the relative abundances of bacterial taxa found in your sample(s).
-The taxonomic levels that you can look at range from Phylum (shallow) to Genus (deep).
-An explanation of taxonomy and taxonomic levels can be read <a href="https://microbio.me/%(sitebase)sauthed/addendum/#taxcharts">here</a>;
-for an explanation of why 16S marker gene sequencing cannot identify species, please see <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1950982/">this paper</a>). If you look at deeper taxonomic levels, they will be colored different shades of the corresponding phylum color. Rolling over a color will tell you the bacterial taxonomy and relative abundance of that taxonomy in that sample.
-<br/>- Select taxa level: (Phylum, Class, Order, Family, Genus) - will determine the level shown on each of the samples in the graph.
+  <div class='row'>
+    <div name='beta-diversity-plot' class='col-md-12'>
+    {{ beta }}
+    </div>
+  </div>
+
+
 </div>
