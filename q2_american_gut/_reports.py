@@ -133,14 +133,45 @@ class Reporter:
         """
         # most enriched microbes
         # 1. calculate population-average proportion of microbes
-        # 2. calculate taxonomic summary for subject
-        # 3. calculate enrichment values for the subject
+        sample_type_subset = self._mf[self._mf[self.sample_type] == sample_type].index
 
+        feature_table_sample_type = self._feature_table.filter(sample_type_subset,
+                                                               inplace=False)
 
-        # reuses whatever was on the latex thing
+        #TODO
+        # prune BIOM table to remove empty features
+
+        # find most prevalent microbes
+        presence_absence_table = feature_table_sample_type.pa()
+        f = lambda x, y: x+y
+        prevalence = pd.Series(presence_absence_table.reduce(f, 'observation'),
+                               index=presence_absence_table.ids(axis='observation'))
+
+        subset_feature_table = feature_table_sample_type.filter(subset,
+                                                                axis='sample',
+                                                                invert=False,
+                                                                inplace=False)
+        # remove 0 features
+        subset_feature_table.remove_empty(axis='observation', inplace=True)
+        subset_features = subset_feature_table.ids(axis='observation')
+
+        subset_prevalence = prevalence[subset_features].sort_values()
+
+        # replace UUIDs with taxonomy
+        subset_prevalence_wtax = pd.Series(subset_prevalence.values,
+                                           index=self._taxa[subset_prevalence.index].values)
+
+        most_popular = subset_prevalence_wtax[-5:]
+        most_unique = subset_prevalence_wtax[:5]
+
+        most = most_popular.to_frame().to_html() + most_unique.to_frame().to_html()
+
+        #TODO
+        # most abundant microbes in the population
+
 
         # return an HTML-formatted Pandas dataframe
-        return None
+        return most
 
     def iter_sample_types(self, subject_sub):
         """Iterate over the sample types in a subject's dataframe
@@ -177,8 +208,9 @@ class Reporter:
         pd.DataFrame
             The subset of the metadata corresponding to each subject's samples.
         """
+        _mf = self._mf.loc[self._feature_table.ids()].copy()
         # expects to yield the subject ids and subject types
-        sub = self._mf.loc[self._samples].copy()
+        sub = _mf.loc[self._samples].copy()
 
         for vals, df in sub.groupby([self.host_subject_id, self.host_type]):
             host_subject_id, host_type = vals
