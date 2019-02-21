@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from io import StringIO
 import pandas as pd
 import numpy as np
+from scipy.stats.mstats import gmean
+from q2_types.feature_table._transformer import _table_to_dataframe
 
 
 class Reporter:
@@ -100,7 +102,7 @@ class Reporter:
         # general distribution
         # colored by body site
         for i, body_site in enumerate(body_sites):
-            body_site_subset = self._beta.samples.loc[self._mf[self._mf[self.sample_type] == body_site].index]
+            body_site_subset = self._beta.samples.reindex(self._mf[self._mf[self.sample_type] == body_site].index)
 
             ax.scatter(body_site_subset[0], body_site_subset[1],
                        s=area,
@@ -138,11 +140,9 @@ class Reporter:
         feature_table_sample_type = self._feature_table.filter(sample_type_subset,
                                                                inplace=False)
 
-        #TODO
-        # prune BIOM table to remove empty features
-
+        # feature_table_sample_type_copy = feature_table_sample_type.copy()
         # find most prevalent microbes
-        presence_absence_table = feature_table_sample_type.pa()
+        presence_absence_table = feature_table_sample_type.pa(inplace=False)
         f = lambda x, y: x+y
         prevalence = pd.Series(presence_absence_table.reduce(f, 'observation'),
                                index=presence_absence_table.ids(axis='observation'))
@@ -164,11 +164,22 @@ class Reporter:
         most_popular = subset_prevalence_wtax[-5:]
         most_unique = subset_prevalence_wtax[:5]
 
+        # most popular for the participant across the whole project 
+        # + the most unique microbes to the participant
         most = most_popular.to_frame().to_html() + most_unique.to_frame().to_html()
 
-        #TODO
-        # most abundant microbes in the population
+        # most abundant microbes in the participant's samples
+        # geometric mean rank of each bacteria in each sample in the subset
+        abundance_rank = _table_to_dataframe(subset_feature_table).T.rank().apply(gmean,
+                                                                          axis=1).sort_values(ascending=False)
 
+        abundance_rank_wtax = pd.Series(abundance_rank.values,
+                                        index=self._taxa[abundance_rank.index].values)
+
+        most_abundant = abundance_rank_wtax[:10]
+
+        # update `most`
+        most = most + most_abundant.to_frame().to_html()
 
         # return an HTML-formatted Pandas dataframe
         return most
